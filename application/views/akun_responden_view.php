@@ -5,7 +5,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Home: <?php echo $this->session->userdata('orgname');?></title>
+	<title>Responden: <?php echo $this->session->userdata('orgname');?></title>
 	<link rel="stylesheet" href="http://localhost/is-evaluation/assets/css/bootstrap.min.css"/>
 	<script src="http://localhost/is-evaluation/assets/jQuery/jquery-3.3.1.min.js"></script>
 	<script src="http://localhost/is-evaluation/assets/js/bootstrap.min.js"></script>
@@ -19,6 +19,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 	
 	<div class="container">
 		<table border="1">
+			<th>Username</th>
+			<th>Password</th>
+			<th>Sistem</th>
+			<th>Status</th>
+			<th>Action</th>
 			<?php foreach($responden as $row) {?>
 			<tr>
 				<td width="100" height="25">
@@ -30,8 +35,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 				<td width="500">
 					<?php echo $row['nama_sistem']; ?>
 				</td>
-				<td>
+				<td width="100">
+					<?php
+					if($row['on_hold'] == 'true') {
+						echo "On-Hold";
+					} else {
+						echo "Aktif";
+					}
+					?>
+				</td>
+				<td align="center">
 					<a href="<?php echo base_url(); ?>organisasi/editresp/<?php echo $row['id_responden']?>"><button type="button" class="btn btn-default">Edit</button></a>
+					<?php if ($row['on_hold'] == 'aktifkan') {?>
+						<a href="<?php echo base_url(); ?>organisasi/aktifkanresp/<?php echo $row['id_responden']?>"><button type="button" class="btn btn-default">Aktifkan</button></a>
+					<?php } ?>
 				</td>
 			</tr>
 		<?php } ?>

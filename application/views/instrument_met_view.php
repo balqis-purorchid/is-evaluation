@@ -15,8 +15,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <?php $this->load->view('template/navbar.php'); ?>
     <div class="container">
         <div class="row">
-            <!-- <div class="col-md-4"> -->
-                <!-- <div id='login_form'> -->
                     <form action='<?php echo base_url();?>create_bsc/finishing_bsc' method='post'>
                         <input type="hidden" name="id_bsc" value="<?php echo $id_bsc; ?>">
                         <h2>Buat Scorecard Baru</h2>

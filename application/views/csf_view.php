@@ -16,27 +16,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <!-- <div id='login_form'> -->
-                    <form action='<?php echo base_url();?>create_bsc/generate_instrument/<?php echo $id_bsc; ?>' method='post'>
-                        <h2>Buat Scorecard Baru</h2>
-                        <h3>Pilih CSF dari sistem</h3>
+                <form action='<?php echo base_url();?>create_bsc/generate_instrument' method='post'>
+                    <h2>Buat Scorecard Baru</h2>
+                    <h3>Pilih CSF dari sistem</h3>
+                    <br />
+
+                    <input type="hidden" name="id_sistem" value="<?php echo $id_sistem; ?>">
+                    <input type="hidden" name="id_bsc" value="<?php echo $id_bsc; ?>">
+
+                    <?php foreach ($csf as $row) { ?>
+                        <input type="checkbox" name="csf[]" value="<?php echo $row->id_csf; ?>">
+                        <label for="'<?php echo $row->id_csf; ?>'"><?php echo $row->teks_csf; ?></label>
                         <br />
+                    <?php }
+                    ?>
 
-                        <input type="hidden" name="id_sistem" value="<?php echo $id_sistem; ?>">
-
-                        <?php foreach ($csf as $row) { ?>
-                            <input type="checkbox" name="csf[]" value="<?php echo $row->id_csf; ?>">
-                            <label for="'<?php echo $row->id_csf; ?>'"><?php echo $row->teks_csf; ?></label>
-                            <br />
-                        <?php }
-                        ?>
-
-                        <!-- <?php echo '<script>console.log("Your sistem_view here")</script>'; ?> -->
-
-                        <input type='Submit' value='Generate Instrument' />
-                    
-                    </form>
-                <!-- </div> -->
+                    <input type='Submit' value='Generate Instrument' />
+                
+                </form>
             </div>
         </div>
     </div>

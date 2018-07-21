@@ -45,6 +45,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </table>
 
                     <input type='Submit' class="btn btn-default" value='Daftar' />
+                    <a href="<?php echo base_url();?>"><button type="button" class="btn btn-default">Masuk</button></a>
 
                 </form>
             </div>

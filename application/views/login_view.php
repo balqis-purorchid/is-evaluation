@@ -25,7 +25,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					            <label for='username'>Username</label>
 		            		</td>
 		            		<td height="50">
-		           				<input type='text' name='username' id='username' size='25' /><br />
+		           				<input type='text' name='username' id='username' size='25' / required="required"><br />
 		            		</td>
 		            	</tr>
 		            	<tr></tr>
@@ -34,7 +34,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 					            <label for='password'>Password</label>
 		            		</td>
 		            		<td height="50">
-					            <input type='password' name='password' id='password' size='25' /><br />                            
+					            <input type='password' name='password' id='password' size='25' required="required" /><br />                            
 		            		</td>
 		            	</tr>
 		            </table>

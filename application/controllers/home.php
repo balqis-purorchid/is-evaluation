@@ -8,6 +8,10 @@ class Home extends CI_Controller{
     
     public function index(){
         $this->load->model('home_model');
+
+        //pengecekan seluruh akun responden milik organisasi
+        $this->home_model->cek_responden($this->session->userdata('userid'));
+
         $nilai = $this->home_model->get_data_nilai();
         $this->load->view('home_view');
     }

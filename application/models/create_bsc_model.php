@@ -6,8 +6,7 @@ class Create_BSC_Model extends CI_Model{
         parent::__construct();
     }
 
-    public function add_bsc($perspektif) {
-    	$id_org = $this->session->userdata('userid');
+    public function add_bsc($id_org, $perspektif) {
     	//get organization id
     	$data = array(
     		'id_bsc' => '',
@@ -20,12 +19,12 @@ class Create_BSC_Model extends CI_Model{
     	return $id_bsc;
     }
 
-    public function add_sistem_to_bsc($id_sistem, $id_bsc) {
-    	$updateSistem = array(
-    		'id_sistem' => $id_sistem
-    	);
-    	$this->db->where('id_bsc', $id_bsc);
-    	$this->db->update('tb_bsc', $updateSistem);
+    public function add_sistem_to_bsc($id_bsc, $id_sistem) {
+        $data = array(
+            'id_sistem' => $id_sistem
+        );
+        $this->db->where('id_bsc', $id_bsc);
+        $this->db->update('tb_bsc', $data);
     }
 
     public function add_metrics_used($id_bsc, $metrics) {
@@ -54,21 +53,23 @@ class Create_BSC_Model extends CI_Model{
         //get dulu instrumen mana aja by id metric
         $instrumen = [];
         foreach ($metrics as $row) {
+            //ambil dari tabel instrumen yang metrics nya dipakai
             $this->db->select('id_instrumen');
             $this->db->from('tb_instrumen');
             $this->db->where('id_metric', $row);
-            $id_instrumen = $this->db->get()->row()->id_instrumen;
-            if($id_instrumen) {
-                array_push($instrumen, $id_instrumen);
+            $query = $this->db->get()->row();
+            if($query) {
+                array_push($instrumen, $query->id_instrumen);
             }
         }
 
+        // print_r($instrumen);
         //masukkin ke tb_instrumen_dipakai
         foreach ($instrumen as $row) {
             $data = array(
                 'id_pakai_instrumen' => '',
                 'id_bsc' => $id_bsc,
-                'id_instrumen' => $id_instrumen
+                'id_instrumen' => $row
             );
             $this->db->insert('tb_instrumen_dipakai', $data);
         }
@@ -110,29 +111,17 @@ class Create_BSC_Model extends CI_Model{
         }
     }
 
-    public function get_sistem_by_perspektif($perspektif){
-    	$sistem = [];
+    public function get_data_by_perspektif($tablename, $perspektif) {
+    	$result = [];
     	// echo '<script>console.log("'.$perspective.'")</script>';
-    	$tb_sistem = $this->db->get('tb_sistem');
-    	foreach ($tb_sistem->result() as $row) {
-    		if($row->perspektif == $perspektif) {
-    			// $row = $tb_sistem->row();
-    			array_push($sistem, $row);
-    		}
-    	}
-    	return $sistem;
-    }
-
-    public function get_metrics_by_perspektif($perspektif){
-    	$metrics = [];
-    	$query = $this->db->get('tb_metrics');
+    	$query = $this->db->get($tablename);
     	foreach ($query->result() as $row) {
     		if($row->perspektif == $perspektif) {
-    			array_push($metrics, $row);
+    			// $row = $tb_sistem->row();
+    			array_push($result, $row);
     		}
     	}
-
-    	return $metrics;
+    	return $result;//hasilnya berupa array of object
     }
 
     public function get_csf_by_sistem($id_sistem){
@@ -145,7 +134,7 @@ class Create_BSC_Model extends CI_Model{
     			array_push($csf, $row);
     		}
     	}
-    	return $csf;
+    	return $csf;//hasilnya berupa array of object
     }
 
     public function get_instrument_used($id_bsc) {
@@ -164,16 +153,19 @@ class Create_BSC_Model extends CI_Model{
         return $this->db->get()->result_array();
     }
 
-    public function tambah_akun($id_bsc, $username, $password, $id_sistem) {
-    	$now = date('Y-m-d');
+    public function tambah_akun($id_bsc, $username, $password, $org, $sistem) {
+    	$now = new DateTime();
+        $tanggal_buat = date_format($now, 'Y-m-d');
+        $activate = date_format(date_modify($now, '+6 month'), 'Y-m-d');
         $data = array(
     		'id_responden' => '',
     		'username_responden' => $username,
     		'password_responden' => $password,
     		'id_bsc' => $id_bsc,
-            'id_org' => $this->session->userdata('userid'),
-            'id_sistem' => $id_sistem,
-            'tanggal_buat' => $now,
+            'id_org' => $org,
+            'id_sistem' => $sistem,
+            'tanggal_buat' => $tanggal_buat,
+            'tanggal_aktifasi' => $activate,
     	);
     	$this->db->insert('tb_responden', $data);
     }
@@ -206,28 +198,9 @@ class Create_BSC_Model extends CI_Model{
 
         //get metrics yang digunakan di bsc
         $metrics = $this->get_metrics_used($id_bsc);
-        // $this->db->where('id_bsc', $id_bsc);
-        // $query = $this->db->get();
-        // // print_r($query->result_array());
-        // $id_metric = array();
-        // foreach ($query->result_array() as $row) {
-        //     array_push($id_metric, $row['id_metric']);
-        //     // echo $row['id_metric'];
-        // }
 
         //get instrumen yg dipakai
         $instrumen = $this->get_instrument_used($id_bsc);
-        // $instrumen = array();
-        // foreach ($id_metric as $row) {
-        //     $this->db->select('*');
-        //     $this->db->from('tb_instrumen');
-        //     $this->db->where('id_metric', $row);
-        //     $ex = $this->db->get()->row();
-        //     if($ex) {
-        //         array_push($instrumen, $ex);
-        //     }
-            
-        // }
         
         //get id_csf yang digunakan di bsc
         // $this->db->select('*');

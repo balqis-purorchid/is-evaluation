@@ -6,6 +6,34 @@ class Organisasi_model extends CI_Model{
         parent::__construct();
     }
 
+    public function aktifkan_r($id_resp, $username, $password) {
+        //kalau yang diinput lagi sama user ga berubah bakal redirect sampe berubah dan gaada yg sama di db
+        $check = $this->not_exist('username_responden', 'tb_responden', $username);
+        $check2 = $this->not_exist('password_responden', 'tb_responden', $password);
+
+        //kebijakan 1 : aktifasi kapanpun, jaraknya bakal tetep 3 hari untuk ngisi, dan pengisian berikutnya 6 bulan kemudian
+        $now = new DateTime();
+        $tanggal_buat = date_format($now, 'Y-m-d');
+        $activate = date_format(date_modify($now, '+6 month'), 'Y-m-d');
+
+        if($check && $check2) {
+            //kalau gaada, update
+            $updateData = array(
+                'username_responden' => $username,
+                'password_responden' => $password,
+                'tanggal_buat' => $tanggal_buat,
+                'tanggal_aktifasi' => $activate,
+                'on_hold' => 'false'
+            );
+            $this->db->where('id_responden', $id_resp);
+            $this->db->update('tb_responden', $updateData);
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
     public function tambah_akun($data) {
     	// $id_org = $this->session->userdata('userid');
     	//get organization id
@@ -29,8 +57,8 @@ class Organisasi_model extends CI_Model{
         return $this->db->get()->row();
     }
 
-    public function get_responden() {
-        $id_org = $this->session->userdata('userid');
+    public function get_responden($id_org) {
+        
         $this->db->select('*');
         $this->db->from('tb_responden');
         $this->db->join('tb_sistem', 'tb_sistem.id_sistem = tb_responden.id_sistem');
@@ -55,7 +83,7 @@ class Organisasi_model extends CI_Model{
         $query = $this->db->get()->row();
 
         //kalau nama atau username ga berubah
-        print_r($query->nama_org);
+        // print_r($query->nama_org);
         if(($query->nama_org == $nama_org) && ($query->username_org == $username)) {
             //langsung update password aja
             $updateData = array(
@@ -124,52 +152,40 @@ class Organisasi_model extends CI_Model{
             }
         }
 
-        // $this->db->where('username_org', $username);
-        // $query = $this->db->get('tb_organisasi');
-        // // print_r($query->num_rows);
-        // if($query->num_rows() == 0) {
-        //     $this->db->where('nama_org', $nama_org);
-        //     $query2 = $this->db->get('tb_organisasi');
-        //     if($query2->num_rows() == 0) {
-        //         //kalau gaada, update
-        //         $updateData = array(
-        //             'nama_org' => $nama_org,
-        //             'username_org' => $username,
-        //             'password_org' => $password
-        //         );
-        //         $this->db->where('id_org', $id_org);
-        //         $this->db->update('tb_organisasi', $updateData);
-        //         return true;
-        //     }
-        //     else{
-        //         return false;
-        //     }
-            
-        // }
-        // else {
-        //     return false;
-        // }
     }
 
     public function update_r($id_resp, $username, $password) {
-        //cek dulu username exist/ga
-        $check = $this->not_exist('username_responden', 'tb_responden', $username);
-        // $this->db->where('username_responden', $username);
-        // $query = $this->db->get('tb_responden');
-        // print_r($query->num_rows);
-        // if($query->num_rows() == 0) {
-        if($check) {
-            //kalau gaada, update
+        //cek dulu apakah username tidak diubah
+        $this->db->select('*');
+        $this->db->from('tb_responden');
+        $this->db->where('id_responden', $id_resp);
+        $query = $this->db->get()->row();
+
+        //kalau username ga berubah
+        if($query->username_responden == $username) {
             $updateData = array(
-                'username_responden' => $username,
                 'password_responden' => $password
             );
             $this->db->where('id_responden', $id_resp);
             $this->db->update('tb_responden', $updateData);
             return true;
         }
-        else {
-            return false;
+        //kalau username berubah
+        else if($query->username_responden != $username) {
+            //cek dulu username exist/ga
+            $check = $this->not_exist('username_responden', 'tb_responden', $username);
+            if($check) {
+                $updateData = array(
+                    'username_responden' => $username,
+                    'password_responden' => $password
+                );
+                $this->db->where('id_responden', $id_resp);
+                $this->db->update('tb_responden', $updateData);
+                return true;
+            }
+            else {
+                return false;
+            }
         }
     }
 

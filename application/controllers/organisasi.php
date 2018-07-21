@@ -21,6 +21,47 @@
         }
     }
 
+    public function aktifkanresp($id_resp = NULL, $msg = NULL) {
+        if($msg == NULL) { //berarti dibuka langsung dari view edit akun
+            $id_responden = $this->uri->segment(3);
+            $data['msg'] = NULL;
+        } else { //alias redirect dari post_edit karena username already exists
+            $id_responden = $id_resp;
+            $data['msg'] = $msg;
+        }
+        // echo $msg;
+
+        //load row
+        $this->load->model('organisasi_model');
+        $data['resp'] = $this->organisasi_model->get_responden_by_id($id_responden);
+        $data['keterangan'] = "Username dan password wajib diganti";
+        // print_r($data['resp']);
+
+        //load view untuk edit akun
+        $this->load->view('aktifkan_akun_view', $data);
+    }
+
+    public function aktifkan_akun() {
+        $id_resp = $this->input->post('id_resp');
+        $username = $this->input->post('username_r');
+        $password = $this->input->post('password_r');
+
+        //load model
+        $this->load->model('organisasi_model');
+        //edit ke model
+        $check = $this->organisasi_model->aktifkan_r($id_resp, $username, $password);
+        // print_r($check);
+        if($check) {
+            //berhasil, kembali ke laman responden
+            redirect('organisasi/responden');
+        }
+        else {
+            $msg = "<font color=red>Invalid username/password.</font><br />";
+            // redirect('organisasi/editresp/'.$id_resp, $msg);
+            $this->aktifkanresp($id_resp, $msg);
+        }
+    }
+
     //daftar untuk organisasi
     public function akun_baru() {
         $this->load->model('organisasi_model');
@@ -54,11 +95,12 @@
 
     //melihat/edit akun responden
     public function responden() {
-        // $this->check_isvalidated();
+        $id_org = $this->session->userdata('userid');
         //load model
         $this->load->model('organisasi_model');
         //get semua data responden
-        $data['responden'] = $this->organisasi_model->get_responden();
+        $data['responden'] = $this->organisasi_model->get_responden($id_org);
+        // print_r($data['responden']);
         $this->load->view('akun_responden_view', $data);
     }
     
