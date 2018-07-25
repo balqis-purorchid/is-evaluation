@@ -95,7 +95,8 @@ $autoload['helper'] = array(
     'form',
     'text',
     'html',
-    'date'
+    'date',
+    'cookie'
 );
 
 /*

@@ -13,6 +13,9 @@ class Home extends CI_Controller{
         $this->home_model->cek_responden($this->session->userdata('userid'));
 
         $nilai = $this->home_model->get_data_nilai();
+
+        //kalo masuk abis bikin bsc, kosongin cookie bsc biar ga bentrok kalo mau bikin bsc baru
+        delete_cookie('id_bsc');
         $this->load->view('home_view');
     }
 
@@ -53,6 +56,16 @@ class Home extends CI_Controller{
 
     public function do_logout(){
         $this->session->sess_destroy();
+        // unset cookies
+        if (isset($_SERVER['HTTP_COOKIE'])) {
+            $cookies = explode(';', $_SERVER['HTTP_COOKIE']);
+            foreach($cookies as $cookie) {
+                $parts = explode('=', $cookie);
+                $name = trim($parts[0]);
+                setcookie($name, '', time()-1000);
+                setcookie($name, '', time()-1000, '/');
+            }
+        }
         redirect('login');
     }
     

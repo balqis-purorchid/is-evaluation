@@ -14,52 +14,57 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body>
     <?php $this->load->view('template/navbar.php'); ?>
     <div class="container">
+        <!-- <?php print_r($metrics); ?> -->
         <div class="row">
-                    <form action='<?php echo base_url();?>create_bsc/finishing_bsc' method='post'>
-                        <input type="hidden" name="id_bsc" value="<?php echo $id_bsc; ?>">
-                        <h2>Buat Scorecard Baru</h2>
-                        <h3>Isi sasaran strategi yang akan dijadikan bahan penilaian untuk masing-masing instrumen penilaian</h3>
-                        <br />
-                        <table border="1">
-                            <th>Metric</th>
-                            <th>Bobot</th>
+            <form action='<?php echo base_url();?>create_bsc/finishing_bsc' method='post'>
+                <!-- <input type="hidden" name="id_bsc" value="<?php echo $id_bsc; ?>"> -->
+                <h3>Buat Scorecard Baru</h2>
+                <p>Isi sasaran strategi yang akan dijadikan bahan penilaian untuk masing-masing instrumen penilaian</p>
+                <!-- <br /> -->
+                <table class="table">
+                    <thead>
+                        <th>Ukuran (Measure)</th>
+                        <th>Bobot</th>
+                    </thead>
+                    <tbody>
                         <?php foreach ($metrics as $row) { ?>
-                            <tr>
-                                <td>
-                                    <?php echo $row['teks_metric']; ?>
-                                </td>
-                                <td>
-                                    <input type="number" name="bobot[<?php echo $row['id_pakai_metric']; ?>]" max="100" min="0">
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>
+                                <?php echo $row->teks_metric; ?>
+                            </td>
+                            <td>
+                                <input type="number" name="bobot[<?php echo $row->id_metric; ?>]" max="100" min="0">
+                            </td>
+                        </tr>
                         <?php } ?>
-                        </table>
-                        <br />
+                    </tbody>
+                </table>
+                <br />
 
-                        <h3>Isi sasaran strategi yang akan dijadikan bahan penilaian untuk masing-masing instrumen penilaian</h3>
-                        <br />
-                        <table border="1">
-                            <th>Instrumen</th>
-                            <th>Sasaran</th>
+                <p>Isi sasaran strategi yang akan dijadikan bahan penilaian untuk masing-masing instrumen penilaian</p>
+                <br />
+                <table class="table">
+                    <thead>
+                        <th>Instrumen</th>
+                        <th>Sasaran</th>
+                    </thead>
+                    <tbody>
                         <?php foreach ($instrumen as $row) { ?>
-                            <tr>
-                                <td>
-                                    <?php echo $row['teks_instrumen']; ?>
-                                </td>
-                                <td>
-                                    <input type="number" name="sasaran_strategi[<?php echo $row['id_pakai_instrumen']; ?>]" max="100" min="0">
-                                </td>
-                            </tr>
+                        <tr>
+                            <td>
+                                <?php echo $row->teks_instrumen; ?>
+                            </td>
+                            <td>
+                                <input type="number" name="sasaran_strategi[<?php echo $row->id_instrumen; ?>]" max="100" min="0">
+                            </td>
+                        </tr>
                         <?php } ?>
-                        </table>
-                        <br />
-                        
-
-                        <input type='Submit' value='Generate BSC' />
-                    
-                    </form>
-                <!-- </div> -->
-            <!-- </div> -->
+                    </tbody>
+                </table>
+                
+                <input type='Submit' class="btn btn-default pull-right" value='Generate Evaluation Scorecard' />
+            
+            </form>
         </div>
     </div>
     

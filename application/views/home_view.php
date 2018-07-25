@@ -5,19 +5,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Home: <?php echo $this->session->userdata('orgname');?></title>
 	<link rel="stylesheet" href="http://localhost/is-evaluation/assets/css/bootstrap.min.css"/>
 	<script src="http://localhost/is-evaluation/assets/jQuery/jquery-3.3.1.min.js"></script>
 	<script src="http://localhost/is-evaluation/assets/js/bootstrap.min.js"></script>
-	<?php
-		// print_r($nilai);
-	?>
+	<link rel="stylesheet" href="http://localhost/is-evaluation/assets/css/custom.css"/>
+	<script src="http://localhost/is-evaluation/assets/jQuery/custom.js"></script>
 
+	<title>Home: <?php echo $this->session->userdata('orgname');?></title>
 </head>
 <body>  
-	<?php $this->load->view('template/navbar.php'); ?>
+	<!-- <?php $this->load->view('template/navbar.php'); ?> -->
+	<?php $this->load->view('template/sidebar.php'); ?>
 	
-	<div class="container">
+	<div class="main">
 		<div class="row">
 			<div class="col-sm-3">
 				<a href="<?php echo base_url();?>home/business"><button type="button" class="btn btn-default">Business Value</button></a>

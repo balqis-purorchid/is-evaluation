@@ -34,7 +34,7 @@
         //load row
         $this->load->model('organisasi_model');
         $data['resp'] = $this->organisasi_model->get_responden_by_id($id_responden);
-        $data['keterangan'] = "Username dan password wajib diganti";
+        // $data['keterangan'] = "Username dan password wajib diganti";
         // print_r($data['resp']);
 
         //load view untuk edit akun
