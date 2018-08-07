@@ -74,10 +74,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <?php foreach ($metrics as $row) { ?>
                                 <tr>
                                     <td>
-                                        <?php echo $row['teks_metric']; ?>
+                                        <?php echo $row->teks_metric; ?>
                                     </td>
                                     <td>
-                                        <?php echo $row['bobot']; ?>%
+                                        <?php echo $row->bobot; ?>%
                                     </td>
                                 </tr>
                                 <?php } ?>
@@ -101,38 +101,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <?php foreach ($instrumen as $row) { ?>
                                 <tr>
                                     <td width="400">
-                                        <?php echo $row['teks_instrumen']; ?>
+                                        <?php echo $row->teks_instrumen; ?>
                                     </td>
-                                    
-                                    <?php 
-                                    if($row['tipe_jawaban'] == "skala") { ?>
-                                        <td width="10%">
-                                            <?php echo $row['teks_skala1']; ?>
-                                        </td>
-                                        <td width="10%">
-                                            <?php echo $row['teks_skala2']; ?>
-                                        </td>
-                                        <td width="10%">
-                                            <?php echo $row['teks_skala3']; ?>
-                                        </td>
-                                        <td width="10%">
-                                            <?php echo $row['teks_skala4']; ?>
-                                        </td>
-                                        <td width="10%">
-                                            <?php echo $row['teks_skala5']; ?>
-                                        </td>
-                                        
-                                    <?php } else if($row['tipe_jawaban'] == "yt") {?>
-                                        <td>
-                                            <?php echo "Ya"; ?>
-                                        </td>
-                                        <td>
-                                            <?php echo "Tidak"; ?>
-                                        </td>
-                                    <?php } ?>
-                                        <td>
-                                            <?php echo $row['sasaran_strategi']; ?>%
-                                        </td>
+                                    <td width="10%">
+                                        <?php echo $row->teks_skala1; ?>
+                                    </td>
+                                    <td width="10%">
+                                        <?php echo $row->teks_skala2; ?>
+                                    </td>
+                                    <td width="10%">
+                                        <?php echo $row->teks_skala3; ?>
+                                    </td>
+                                    <td width="10%">
+                                        <?php echo $row->teks_skala4; ?>
+                                    </td>
+                                    <td width="10%">
+                                        <?php echo $row->teks_skala5; ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $row->sasaran_strategi; ?>%
+                                    </td>
                                 </tr>
                                 <?php } ?>
                             </tbody>

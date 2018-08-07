@@ -44,8 +44,23 @@
 
         // get sistem and metric untuk perspektif yang dipilih
         $sistem = $this->create_bsc_model->get_data_by_perspektif('tb_sistem', $perspektif);//hasilnya berupa array of object
-        $metrics = $this->create_bsc_model->get_data_by_perspektif('tb_metrics', $perspektif);//hasilnya berupa array of object
-        
+        $metrics = [];
+        $metricsA = $this->create_bsc_model->get_data_by_perspektif('tb_metrics', 'Business Value');//hasilnya berupa array of object
+        foreach ($metricsA as $row) {
+            array_push($metrics, $row);
+        }
+        $metricsA = $this->create_bsc_model->get_data_by_perspektif('tb_metrics', 'Internal Process');//hasilnya berupa array of object
+        foreach ($metricsA as $row) {
+            array_push($metrics, $row);
+        }
+        $metricsA = $this->create_bsc_model->get_data_by_perspektif('tb_metrics', 'Future Readiness');//hasilnya berupa array of object
+        foreach ($metricsA as $row) {
+            array_push($metrics, $row);
+        }
+        $metricsA = $this->create_bsc_model->get_data_by_perspektif('tb_metrics', 'User Orientation');//hasilnya berupa array of object
+        foreach ($metricsA as $row) {
+            array_push($metrics, $row);
+        }
         if($sistem) {
             // $this->pilih_sistem($sistem, $metrics, $id_bsc);
             $data['sistem'] = $sistem;
@@ -70,7 +85,16 @@
             delete_cookie('instrumen');
         }
         else {
-            $metrics = $this->input->post('metrics');
+            $tag = $this->input->post('tag');
+            $metrics = [];
+            //ambil semua metric yang tag nya itu
+            foreach ($tag as $var) {
+                $result = $this->create_bsc_model->get_metrics_by_tag($var);
+                foreach ($result as $row) {
+                    array_push($metrics, $row->id_metric);
+                }
+            }
+            
             $id_sistem = $this->input->post('sistem');
              //add ke cookie
             $cookie = array(
@@ -90,7 +114,7 @@
         }
         
         //add instrumen ke cookie
-        $instrumen = $this->create_bsc_model->get_instrument($metrics);
+        $instrumen = $this->create_bsc_model->get_instrument('id_metric', $metrics);
         $cookie = array(
             'name' => 'instrumen',
             'value' => json_encode($instrumen),
@@ -123,9 +147,17 @@
             );
             $this->input->set_cookie($cookie);
 
+            //get instrumen dari csf
+            $instrumencsf = $this->create_bsc_model->get_instrument('id_csf', $csf);
+
             //get instrumen
-            $data['metrics'] = $this->create_bsc_model->get_metrics_used_byid(json_decode($_COOKIE['id_metrics'], true));
-            $data['instrumen'] = $this->create_bsc_model->get_instrument_used_byid(json_decode($_COOKIE['id_metrics'], true));
+            $data['metrics'] = $this->create_bsc_model->get_metrics_byid(json_decode($_COOKIE['id_metrics'], true));
+            $data['instrumen'] = $this->create_bsc_model->get_instrument('id_metric', json_decode($_COOKIE['id_metrics'], true));
+
+            //gabungkan instrumen dari metric dan csf
+            foreach ($instrumencsf as $row) {
+                array_push($data['instrumen'], $row);
+            }
             $this->load->view('instrument_met_view', $data);
         }
        
@@ -154,13 +186,14 @@
             $arr_metrics = json_decode($_COOKIE['id_metrics'], true);
             $res = $this->create_bsc_model->existed($id_bsc, 'tb_metrics_dipakai');
             if(! $res) {
-                $this->create_bsc_model->add_metrics_used($id_bsc, $arr_metrics, $bobot);
+                $this->create_bsc_model->add_metrics_used($id_bsc, $bobot);
             }
             
             $arr_instrument = json_decode($_COOKIE['instrumen'], true);
+
             $res = $this->create_bsc_model->existed($id_bsc, 'tb_instrumen_dipakai');
             if(! $res) {
-                $this->create_bsc_model->add_instrument_used($id_bsc, $arr_instrument, $sasaran);
+                $this->create_bsc_model->add_instrument_used($id_bsc, $sasaran);
             }
 
             //add csf used

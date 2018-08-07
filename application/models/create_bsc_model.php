@@ -20,10 +20,7 @@ class Create_BSC_Model extends CI_Model{
     	return $id_bsc;
     }
 
-    public function add_metrics_used($id_bsc, $metrics, $bobot) {
-    	$combined = array_combine($metrics, $bobot);
-        // print_r($combined);
-
+    public function add_metrics_used($id_bsc, $combined) {
         foreach ($combined as $metrics => $bobot) {
             $data = array(
                 'id_pakai_metric' => '',
@@ -46,8 +43,7 @@ class Create_BSC_Model extends CI_Model{
     	}
     }
 
-    public function add_instrument_used($id_bsc, $instrumen, $sasaran) {
-        $combined = array_combine($instrumen, $sasaran);
+    public function add_instrument_used($id_bsc, $combined) {
         foreach ($combined as $instrumen => $sasaran) {
             $data = array(
                 'id_pakai_instrumen' => '',
@@ -59,17 +55,19 @@ class Create_BSC_Model extends CI_Model{
         }
     }
 
-    public function get_instrument($metrics) {
+    public function get_instrument($id, $metrics) {
         //get dulu instrumen mana aja by id metric
         $instrumen = [];
         foreach ($metrics as $row) {
             //ambil dari tabel instrumen yang metrics nya dipakai
-            $this->db->select('id_instrumen');
+            $this->db->select('*');
             $this->db->from('tb_instrumen');
-            $this->db->where('id_metric', $row);
-            $query = $this->db->get()->row();
+            $this->db->where($id, $row);
+            $query = $this->db->get()->result();
             if($query) {
-                array_push($instrumen, $query->id_instrumen);
+                foreach ($query as $row) {
+                    array_push($instrumen, $row);
+                }
             }
         }
         return $instrumen;
@@ -87,17 +85,13 @@ class Create_BSC_Model extends CI_Model{
     }
 
     public function get_data_by_perspektif($tablename, $perspektif) {
-    	$result = [];
         $this->db->select('*');
     	$this->db->from($tablename);
         $this->db->where('perspektif', $perspektif);
-    	$query = $this->db->get()->result();
-    	foreach ($query as $row) {
-    		if($row->perspektif == $perspektif) {
-    			// $row = $tb_sistem->row();
-    			array_push($result, $row);
-    		}
-    	}
+        if($tablename == 'tb_metrics') {
+            $this->db->order_by('tag', 'ASC');
+        }
+    	$result = $this->db->get()->result();
     	return $result;//hasilnya berupa array of object
     }
 
@@ -114,7 +108,15 @@ class Create_BSC_Model extends CI_Model{
     	return $csf;//hasilnya berupa array of object
     }
 
-    public function get_metrics_used_byid($arr) {
+    public function get_metrics_by_tag($tag) {
+        $this->db->select('id_metric');
+        $this->db->from('tb_metrics');
+        $this->db->where('tag', $tag);
+        $result = $this->db->get()->result();
+        return $result;
+    }
+
+    public function get_metrics_byid($arr) {
         $metrics = [];
         foreach ($arr as $row) {
             $this->db->select('*');
@@ -128,18 +130,22 @@ class Create_BSC_Model extends CI_Model{
         return $metrics;
     }
 
-    public function get_instrument_used_byid($arr) {
-        $instrumen = [];
-        foreach ($arr as $row) {
-            $this->db->select('*');
-            $this->db->from('tb_instrumen');
-            $this->db->where('id_metric', $row);
-            $result = $this->db->get()->row();
-            if ($result) {
-                array_push($instrumen, $result);
-            }
-        }
-        return $instrumen;
+    public function get_metrics_used($id_bsc) {
+        $this->db->select('*');
+        $this->db->from('tb_metrics_dipakai');
+        $this->db->join('tb_metrics', 'tb_metrics_dipakai.id_metric = tb_metrics.id_metric');
+        $this->db->where('id_bsc', $id_bsc);
+        $result = $this->db->get()->result();
+        return $result;
+    }
+
+    public function get_instrument_used($id_bsc) {
+        $this->db->select('*');
+        $this->db->from('tb_instrumen_dipakai');
+        $this->db->join('tb_instrumen', 'tb_instrumen_dipakai.id_instrumen = tb_instrumen.id_instrumen');
+        $this->db->where('id_bsc', $id_bsc);
+        $result = $this->db->get()->result();
+        return $result;
     }
 
     public function tambah_akun($id_bsc, $username, $password, $org, $sistem) {
@@ -181,7 +187,6 @@ class Create_BSC_Model extends CI_Model{
         $this->db->from('tb_responden');
         $this->db->where('id_bsc', $id_bsc);
         $query = $this->db->get()->row();
-        // print_r($query);
         $username_r = $query->username_responden;
         $password_r = $query->password_responden;
 

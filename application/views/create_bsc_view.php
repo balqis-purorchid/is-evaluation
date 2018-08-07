@@ -73,8 +73,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </tr>
                         <tr>
                             <td>
-                                <input type="radio" name="perspective" value="Future Orientation">
-                                <label for="Future Orientation">Future Orientation</label>
+                                <input type="radio" name="perspective" value="Future Readiness">
+                                <label for="Future Readiness">Future Readiness</label>
                                 <p>Perspektif pada Balanced Scorecard : Learning and Growth</p>
                             </td>
                             <td>

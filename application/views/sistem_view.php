@@ -25,9 +25,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <label for="'<?php echo $row->id_sistem; ?>'"><?php echo $row->nama_sistem; ?></label>
                     <br />
                 <?php } ?>
-
+                <hr>
                     <br />
                 <p>Pilih ukuran yang akan digunakan</p>
+                <p>Silakan pilih kategori dari ukuran yang diinginkan. Pada 1 kategori terdapat beberapa ukuran seperti yang dapat dilihat pada tabel di bawah. Deskripsi akan membantu Anda dalam memilih kategori ukuran yang dirasa perlu untuk diukur.</p>
                 <table class="table">
                     <thead>
                         <th>Kategori</th>
@@ -35,14 +36,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <th>Deskripsi</th>
                     </thead>
                     <tbody>
-                        <?php foreach ($metrics as $row) { ?>
+                        <?php
+                            $tag = $metrics['0']->tag;
+                            $count = 0;
+                            foreach ($metrics as $row) { 
+                        ?>
                         <tr>
                             <td>
-                                <?php echo $row->tag; ?>
+                                <?php if($count ==0) { ?>
+                                    <input type="checkbox" name="tag[]" value="<?php echo $tag; ?>">
+                                    <?php echo $tag; $count++; ?>
+                                <?php } if($row->tag != $tag && $count!=0) { ?>
+                                    <?php $tag = $row->tag; ?>
+                                    <input type="checkbox" name="tag[]" value="<?php echo $tag; ?>">
+                                    <?php echo $tag; ?>
+                                <?php } ?>
                             </td>
                             <td>
-                                <input type="checkbox" name="metrics[]" value="<?php echo $row->id_metric; ?>">
-                                <label for="'<?php echo $row->id_metric; ?>'"><?php echo $row->teks_metric; ?></label>
+                                <?php echo $row->teks_metric; ?>
                             </td>
                             <td>
                                 <?php echo $row->deskripsi; ?>

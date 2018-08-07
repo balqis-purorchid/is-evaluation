@@ -30,7 +30,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <?php }
                 ?>
 
-                <input type='Submit' class="btn btn-default" value='Lanjut ke isntrumen' />
+                <input type='Submit' class="btn btn-default" value='Lanjut ke instrumen' />
             
             </form>
         </div>
