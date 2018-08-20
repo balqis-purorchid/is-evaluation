@@ -148,6 +148,14 @@ class Create_BSC_Model extends CI_Model{
         return $result;
     }
 
+    public function get_perspektif_by_tag($tag) {
+        $this->db->select('perspektif');
+        $this->db->from('tb_metrics');
+        $this->db->where('tag', $tag);
+        $res = $this->db->get()->row()->perspektif;
+        return $res;
+    }
+
     public function tambah_akun($id_bsc, $username, $password, $org, $sistem) {
     	$now = new DateTime();
         $tanggal_buat = date_format($now, 'Y-m-d');
@@ -195,29 +203,6 @@ class Create_BSC_Model extends CI_Model{
 
         //get instrumen yg dipakai
         $instrumen = $this->get_instrument_used($id_bsc);
-        
-        //get id_csf yang digunakan di bsc
-        // $this->db->select('*');
-        // $this->db->from('tb_csf_dipakai');
-        // $this->db->where('id_bsc', $id_bsc);
-        // $query = $this->db->get();
-        // $id_csf = array();
-        // foreach ($query->result_array() as $row) {
-            // array_push($id_csf, $row['id_csf']);
-        // }
-
-        //get csf yang dipakai
-        // if($id_csf) {
-        //     foreach ($id_csf as $row) {
-        //         $this->db->select('*');
-        //         $this->db->from('tb_instrumen');
-        //         $this->db->where('id_csf', $row);
-            // $abc = $this->db->get()->row();
-            // array_push($instrumen, $abc);
-                // array_push($instrumen, $this->db->get()->row());
-        //     }
-        // }
-        
         
         return array(
             'id_org' => $id_org,

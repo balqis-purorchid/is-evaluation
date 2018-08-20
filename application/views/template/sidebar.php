@@ -17,7 +17,16 @@
 				<li ><a href='<?php echo base_url();?>home'>Home<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home"></span></a></li>
 				<li ><a href='<?php echo base_url();?>create_bsc'>Buat <i>Scorecard</i><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-list-alt"></span></a></li>
 				<li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Settings <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Hasil Pengukuran <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-stats"></span></a>
+					<ul class="dropdown-menu forAnimate" role="menu">
+						<li><a href='<?php echo base_url();?>hasil/pengukuran/business_value'>Perspektif Business Value</a></li>
+						<li><a href='<?php echo base_url();?>hasil/pengukuran/internal_process'>Perspektif Internal Process</a></li>
+						<li><a href='<?php echo base_url();?>hasil/pengukuran/future_readiness'>Perspektif Future Readiness</a></li>
+						<li><a href='<?php echo base_url();?>hasil/pengukuran/user_orientation'>Perspektif User Orientation</a></li>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown">Pengaturan Akun <span class="caret"></span><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>
 					<ul class="dropdown-menu forAnimate" role="menu">
 						<li><a href='<?php echo base_url();?>organisasi/editorg'>Akun organisasi</a></li>
 						<li><a href='<?php echo base_url();?>organisasi/responden'>Akun responden</a></li>

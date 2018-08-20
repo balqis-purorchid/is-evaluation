@@ -20,6 +20,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 		<!-- <?php echo $keterangan; ?> -->
 		
 		<p>Akun untuk mengisi scorecard <?php echo $resp->nama_sistem; ?></p>
+		<p>Harap mengganti username dan password akun ini untuk mengaktifkannya.</p>
 		<?php if(! is_null($msg)) echo $msg;?>
 		<br />
 		

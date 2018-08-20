@@ -27,8 +27,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <?php } ?>
                 <hr>
                     <br />
+                    <?php if(! is_null($msg)) echo $msg;?>
                 <p>Pilih ukuran yang akan digunakan</p>
                 <p>Silakan pilih kategori dari ukuran yang diinginkan. Pada 1 kategori terdapat beberapa ukuran seperti yang dapat dilihat pada tabel di bawah. Deskripsi akan membantu Anda dalam memilih kategori ukuran yang dirasa perlu untuk diukur.</p>
+                <p>Pengguna diharapkan memilih minimal 2 kategori ukuran dari setiap perspektif untuk mendapatkan hasil evaluasi yang lebih akurat.</p>
                 <table class="table">
                     <thead>
                         <th>Kategori</th>
@@ -37,10 +39,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </thead>
                     <tbody>
                         <?php
+                            $perspektif = $metrics['0']->perspektif;
                             $tag = $metrics['0']->tag;
                             $count = 0;
                             foreach ($metrics as $row) { 
+                                if($row->perspektif != $perspektif || $count==0) {
+                                    $perspektif = $row->perspektif;
                         ?>
+                                <tr>
+                                    <td colspan="3"> <h3> Perspektif <?php echo $perspektif; ?> </td>
+                                </tr>
+                                    
+                        <?php } ?>
                         <tr>
                             <td>
                                 <?php if($count ==0) { ?>
@@ -52,7 +62,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <?php echo $tag; ?>
                                 <?php } ?>
                             </td>
-                            <td>
+                            <td width="">
                                 <?php echo $row->teks_metric; ?>
                             </td>
                             <td>

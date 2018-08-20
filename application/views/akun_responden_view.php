@@ -47,8 +47,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 							<?php
 							if($row['on_hold'] == 'true') {
 								echo "On-Hold";
-							} else {
+							} else if($row['on_hold'] == 'false') {
 								echo "Aktif";
+							} else {
+								echo "Menunggu diaktifkan";
 							}
 							?>
 						</td>

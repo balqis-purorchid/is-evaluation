@@ -12,6 +12,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <title>New Scorecard</title>
 </head>
 <body>
+    <!-- javascript buat ngecek jumlah bobot tiap perspektif udah 100 -->
+    <script type="text/javascript">
+        function checkVal() {
+            checked = $("input[type=checkbox]:checked").length;
+
+            if(!checked) {
+                alert("Harap pilih setidaknya 1 CSF");
+                return false;
+            } else {
+                return true;
+            }
+        }
+    </script>
     <?php $this->load->view('template/navbar.php'); ?>
     <div class="container">
         <div class="row">
@@ -30,7 +43,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <?php }
                 ?>
 
-                <input type='Submit' class="btn btn-default" value='Lanjut ke instrumen' />
+                <input type='Submit' onclick="return checkVal();" class="btn btn-default" value='Lanjut ke instrumen' />
             
             </form>
         </div>

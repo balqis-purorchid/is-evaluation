@@ -12,11 +12,45 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <title>New Scorecard</title>
 </head>
 <body>
+    <!-- javascript buat ngecek jumlah bobot tiap perspektif udah 100 -->
+    <script>
+        function getSum(total, num) {
+            return total + num;
+        }
+        function myFunction() {
+            // var group = {};
+            var sum0 = 0, sum1 = 0, sum2 = 0, sum3 = 0;
+            var elements = document.forms.metinsForm.getElementsByTagName("input");
+            for(var i = 0; i < elements.length; i++)
+            {
+                var groupName = elements[i].name.substring(0,6);
+                if(groupName == 'bobot0') {
+                    sum0 = sum0 + parseInt(elements[i].value);
+                } else if(groupName == 'bobot1') {
+                    sum1 = sum1 + parseInt(elements[i].value);
+                } else if(groupName == 'bobot2') {
+                    sum2 = sum2 + parseInt(elements[i].value);
+                } else if(groupName =='bobot3') {
+                    sum3 = sum3 + parseInt(elements[i].value);
+                }
+            }
+
+            if(sum0!=100 || sum1!=100 || sum2!=100 || sum3!=100) {
+                alert("Bobot pada salah satu perspektif tidak 100");
+                return false;
+            } 
+            else if(sum0==100 && sum1==100 && sum2==100 && sum3==100) {
+                return true;
+            }
+            
+        }
+    </script>
+
     <?php $this->load->view('template/navbar.php'); ?>
     <div class="container">
         <!-- <?php print_r($metrics); ?> -->
         <div class="row">
-            <form action='<?php echo base_url();?>create_bsc/finishing_bsc' method='post'>
+            <form action='<?php echo base_url();?>create_bsc/finishing_bsc' id="metinsForm" method='post'>
                 <!-- <input type="hidden" name="id_bsc" value="<?php echo $id_bsc; ?>"> -->
                 <h3>Buat Scorecard Baru</h2>
                 <p>Isi sasaran strategi yang akan dijadikan bahan penilaian untuk masing-masing instrumen penilaian</p>
@@ -27,13 +61,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <th>Bobot</th>
                     </thead>
                     <tbody>
-                        <?php foreach ($metrics as $row) { ?>
+                        <?php 
+                            $pers = $metrics[0]->perspektif;
+                            $count = 0;
+                        ?>
+                        <tr><td colspan="2"><b>Tentukan bobot ukuran dari perspektif <?php echo $pers; ?></b></td></tr>
+                        <?php
+                            foreach ($metrics as $row) { 
+                            // cek kalo perspektifnya sama, name nya sama (ntar disatuin di controller)
+                                if($row->perspektif != $pers) {
+                                    $pers = $row->perspektif;
+                                    $count++;
+                        ?>
+                                    <tr><td colspan="2"><b>Tentukan bobot ukuran dari perspektif <?php echo $pers; ?></b></td></tr>
+                                <?php } ?>
                         <tr>
                             <td>
                                 <?php echo $row->teks_metric; ?>
                             </td>
                             <td>
-                                <input type="number" name="bobot[<?php echo $row->id_metric; ?>]" max="100" min="0">
+                                <input type="number" name="bobot<?php echo $count;?>[<?php echo $row->id_metric; ?>]" id="bobot<?php echo $count;?>" max="100" min="0" required="required">
                             </td>
                         </tr>
                         <?php } ?>
@@ -55,14 +102,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <?php echo $row->teks_instrumen; ?>
                             </td>
                             <td>
-                                <input type="number" name="sasaran_strategi[<?php echo $row->id_instrumen; ?>]" max="100" min="0">
+                                <input type="number" name="sasaran_strategi[<?php echo $row->id_instrumen; ?>]" max="100" min="0" required="required">
                             </td>
                         </tr>
                         <?php } ?>
                     </tbody>
                 </table>
                 
-                <input type='Submit' class="btn btn-default pull-right" value='Generate Evaluation Scorecard' />
+                <input type='Submit' onclick="return myFunction();" class="btn btn-default pull-right" value='Generate Evaluation Scorecard' />
             
             </form>
         </div>

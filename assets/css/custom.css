@@ -75,7 +75,7 @@ nav.sidebar, .main{
 
 	/*lets nav bar to be showed on mouseover*/
 	nav.sidebar:hover + .main{
-		margin-left: 200px;
+		margin-left: 250px;
 	}
 
 	/*Center Brand*/
@@ -128,9 +128,9 @@ nav.sidebar, .main{
 
 	/*gives sidebar width/height*/
 	nav.sidebar{
-		width: 200px;
+		width: 250px;
 		height: 100%;
-		margin-left: -160px;
+		margin-left: -210px;
 		float: left;
 		z-index: 8000;
 		margin-bottom: 0px;
@@ -157,8 +157,8 @@ nav.sidebar, .main{
 
 	/*Allow main to be next to Nav*/
 	.main{
-		width: calc(100% - 200px); /*keeps 100% minus nav size*/
-		margin-left: 200px;
+		width: calc(100% - 250px); /*keeps 100% minus nav size*/
+		margin-left: 250px;
 	}
 
 	/*Show all nav*/

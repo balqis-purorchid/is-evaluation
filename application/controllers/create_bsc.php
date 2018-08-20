@@ -7,6 +7,13 @@
     }
     
     public function index(){
+        delete_cookie('id_bsc');
+        delete_cookie('perspektif');
+        delete_cookie('id_sistem');
+        delete_cookie('id_csf');
+        delete_cookie('id_metrics');
+        delete_cookie('instrumen');
+
         $this->load->model('create_bsc_model');
         $data['sistemBV'] = $this->create_bsc_model->get_data_by_perspektif('tb_sistem', 'Business Value');
         $data['sistemUO'] = $this->create_bsc_model->get_data_by_perspektif('tb_sistem', 'User Orientation');
@@ -25,11 +32,12 @@
     public function generate_system() {
         $this->load->model('create_bsc_model');
         //kalau sebelumnya dah beres milih sistem trus masuk ke page pilih csf langsung balik ke back ke page pilih perspektif (belum milih csf)
-        if($this->input->cookie('id_sistem')) {
+        if($this->input->cookie('id_sistem') && $this->input->cookie('perspektif')) {
             //ambil perspektifnya dari cookie
             $perspektif = $this->input->cookie('perspektif');
             delete_cookie('id_sistem');
             delete_cookie('id_metrics');
+            delete_cookie('instrumen');
         }
         else {
             $perspektif = $this->input->post('perspective');
@@ -61,28 +69,52 @@
         foreach ($metricsA as $row) {
             array_push($metrics, $row);
         }
-        if($sistem) {
-            // $this->pilih_sistem($sistem, $metrics, $id_bsc);
-            $data['sistem'] = $sistem;
-            $data['metrics'] = $metrics;
-            // $data['id_bsc'] = $id_bsc;
-            $this->load->view('sistem_view', $data);
-        }
-        else{
-            redirect('home');
-        }
+
+        $data['sistem'] = $sistem;
+        $data['metrics'] = $metrics;
+        $data['msg'] = NULL;
+        $this->load->view('sistem_view', $data);
     }
 
     public function generate_csf() {
         $this->load->model('create_bsc_model');
 
+        if ($this->input->post('tag') == NULL && ! $this->input->cookie('id_sistem')) {
+            redirect('create_bsc/generate_system');
+        }
+
+        //pengecekan dah bener masing2 perspektif ada 2 ukuran yg dipilih user
+        if ($this->input->post('tag') != NULL) {
+            $counterB = 0;
+            $counterU = 0;
+            $counterF = 0;
+            $counterI = 0;
+            foreach ($this->input->post('tag') as $row) {
+                $pers = $this->create_bsc_model->get_perspektif_by_tag($row);
+                // print_r($pers);
+                if($pers == "Business Value") {
+                    $counterB++;
+                } else if($pers == "Internal Process") {
+                    $counterI++;
+                } else if($pers == "Future Readiness") {
+                    $counterF++;
+                } else if($pers == "User Orientation") {
+                    $counterU++;
+                }
+            }
+            //kalau ada yg kurang dari 2, back
+            if($counterU < 2 || $counterF < 2 || $counterI < 2 || $counterB < 2) {
+                redirect('create_bsc/generate_system');
+            }
+        }
+
         //kalau sebelumnya dah beres milih csf trus masuk ke page atur bobot langsung balik ke back ke page pilih sistem (belum ngisi bobot)
-        if($this->input->cookie('id_csf')) {
+        if($this->input->cookie('id_csf') || $this->input->cookie('id_sistem')) {
             //ambil sistem sama metric dari cookie
             $metrics = json_decode($_COOKIE['id_metrics'], true);
             $id_sistem = json_decode($_COOKIE['id_sistem'], true);
             delete_cookie('id_csf');
-            delete_cookie('instrumen');
+            // delete_cookie('instrumen');
         }
         else {
             $tag = $this->input->post('tag');
@@ -113,7 +145,7 @@
             $this->input->set_cookie($cookie);
         }
         
-        //add instrumen ke cookie
+        //add instrumen yg dari metrics ke cookie
         $instrumen = $this->create_bsc_model->get_instrument('id_metric', $metrics);
         $cookie = array(
             'name' => 'instrumen',
@@ -124,20 +156,30 @@
         
         //ambil csf dari sistem
         $data['csf'] = $this->create_bsc_model->get_csf_by_sistem($id_sistem);//hasilnya berupa array of object
-        // $data['id_sistem'] = $id_sistem;
         $this->load->view('csf_view', $data);
     }
 
     public function generate_instrument() {
         $this->load->model('create_bsc_model');
 
+        if ($this->input->post('csf') == NULL  && !$this->input->cookie('id_csf')) {
+            redirect('create_bsc/generate_csf');
+        }
+
+
+
          //kalau sebelumnya dah beres ngisi bobot/sasaran trus masuk ke page finishing langsung balik ke pilih csf (cookie dah dihapus tuh, tinggal id bsc doang)
         if($this->input->cookie('id_bsc')) {
             redirect('create_bsc/finishing_bsc');
         }
         else {
-             $csf = $this->input->post('csf');
-            // $id_sistem = $this->input->post('id_sistem');
+
+            // //kalau gagal masuk ke finishing bsc karena ada form yg kurang/ga valid
+            // if($this->input->post('csf') == NULL) {
+            //     $csf = json_decode($_COOKIE['id_metrics'], true);
+            // } else if ($this->input->post('csf')) {
+                $csf = $this->input->post('csf');
+            // }
 
             //masukkin csf ke cookies
             $cookie = array(
@@ -148,16 +190,28 @@
             $this->input->set_cookie($cookie);
 
             //get instrumen dari csf
+            // print_r($csf);echo '<br>';
             $instrumencsf = $this->create_bsc_model->get_instrument('id_csf', $csf);
 
             //get instrumen
             $data['metrics'] = $this->create_bsc_model->get_metrics_byid(json_decode($_COOKIE['id_metrics'], true));
+            // print_r($data['metrics']);
             $data['instrumen'] = $this->create_bsc_model->get_instrument('id_metric', json_decode($_COOKIE['id_metrics'], true));
 
             //gabungkan instrumen dari metric dan csf
             foreach ($instrumencsf as $row) {
                 array_push($data['instrumen'], $row);
             }
+
+            //masukkin lagi ke cookie
+            delete_cookie('instrumen');
+            $cookie = array(
+                'name' => 'instrumen',
+                'value' => json_encode($data['instrumen']),
+                'expire' => 7200
+            );
+            $this->input->set_cookie($cookie);
+
             $this->load->view('instrument_met_view', $data);
         }
        
@@ -169,7 +223,7 @@
 
         // ambil nilai2 sasaran yang udah diinput user
         $sasaran = $this->input->post('sasaran_strategi');
-        $bobot = $this->input->post('bobot');
+        // $bobot = $this->input->post('bobot');
         
         //kalau reload
         if ($this->input->cookie('id_bsc')) {
@@ -183,14 +237,14 @@
             $id_bsc = $this->create_bsc_model->add_bsc($this->session->userdata('userid'), $perspektif, $id_sistem);
 
             //add metrics sama instrument used
-            $arr_metrics = json_decode($_COOKIE['id_metrics'], true);
             $res = $this->create_bsc_model->existed($id_bsc, 'tb_metrics_dipakai');
             if(! $res) {
-                $this->create_bsc_model->add_metrics_used($id_bsc, $bobot);
+                $this->create_bsc_model->add_metrics_used($id_bsc, $this->input->post('bobot0'));
+                $this->create_bsc_model->add_metrics_used($id_bsc, $this->input->post('bobot1'));
+                $this->create_bsc_model->add_metrics_used($id_bsc, $this->input->post('bobot2'));
+                $this->create_bsc_model->add_metrics_used($id_bsc, $this->input->post('bobot3'));
             }
             
-            $arr_instrument = json_decode($_COOKIE['instrumen'], true);
-
             $res = $this->create_bsc_model->existed($id_bsc, 'tb_instrumen_dipakai');
             if(! $res) {
                 $this->create_bsc_model->add_instrument_used($id_bsc, $sasaran);
