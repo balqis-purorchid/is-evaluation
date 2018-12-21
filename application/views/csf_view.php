@@ -12,29 +12,40 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <title>New Scorecard</title>
 </head>
 <body>
+    <!-- javascript buat ngecek jumlah bobot tiap perspektif udah 100 -->
+    <script type="text/javascript">
+        function checkVal() {
+            checked = $("input[type=checkbox]:checked").length;
+
+            if(!checked) {
+                alert("Harap pilih setidaknya 1 CSF");
+                return false;
+            } else {
+                return true;
+            }
+        }
+    </script>
     <?php $this->load->view('template/navbar.php'); ?>
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
-                <form action='<?php echo base_url();?>create_bsc/generate_instrument' method='post'>
-                    <h2>Buat Scorecard Baru</h2>
-                    <h3>Pilih CSF dari sistem</h3>
+            <h3>Buat Scorecard Baru</h3>
+            <br />
+            <p>Pilih CSF dari sistem</p>
+            <form action='<?php echo base_url();?>create_bsc/generate_instrument' method='post'>
+
+                <!-- <input type="hidden" name="id_sistem" value="<?php echo $id_sistem; ?>"> -->
+                <!-- <input type="hidden" name="id_bsc" value="<?php echo $id_bsc; ?>"> -->
+
+                <?php foreach ($csf as $row) { ?>
+                    <input type="checkbox" name="csf[]" value="<?php echo $row->id_csf; ?>">
+                    <label for="'<?php echo $row->id_csf; ?>'"><?php echo $row->teks_csf; ?></label>
                     <br />
+                <?php }
+                ?>
 
-                    <input type="hidden" name="id_sistem" value="<?php echo $id_sistem; ?>">
-                    <input type="hidden" name="id_bsc" value="<?php echo $id_bsc; ?>">
-
-                    <?php foreach ($csf as $row) { ?>
-                        <input type="checkbox" name="csf[]" value="<?php echo $row->id_csf; ?>">
-                        <label for="'<?php echo $row->id_csf; ?>'"><?php echo $row->teks_csf; ?></label>
-                        <br />
-                    <?php }
-                    ?>
-
-                    <input type='Submit' value='Generate Instrument' />
-                
-                </form>
-            </div>
+                <input type='Submit' onclick="return checkVal();" class="btn btn-default" value='Lanjut ke instrumen' />
+            
+            </form>
         </div>
     </div>
     

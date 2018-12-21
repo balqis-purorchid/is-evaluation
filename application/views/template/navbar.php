@@ -1,30 +1,35 @@
-<nav class="navbar navbar-default">
-	<div class="container-fluid">
-		<div class="navbar-header">
-		 	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-	        <span class="sr-only">Toggle navigation</span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	        <span class="icon-bar"></span>
-	      </button>
-	      <a class="navbar-brand" href='<?php echo base_url();?>home'><?php echo $this->session->userdata('orgname');?></a>
-	    </div>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <a class="navbar-brand" style="color: white;">IS Monitoring and Evaluation Tools</a>
+    </div>
 
-		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-			<ul class="nav navbar-nav navbar-right">
-		        <li><a href='<?php echo base_url();?>create_bsc'>Buat Scorecard</a></li>
-		        <li><a href='<?php echo base_url();?>organisasi/editorg'>Akun Organisasi</a></li>
-		        <li><a href='<?php echo base_url();?>organisasi/responden'>Akun Responden</a></li>
-		        <li class="dropdown">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Status <span class="caret"></span></a>
-					<ul class="dropdown-menu">
-						<li><a href="#">Nilai Per Sistem</a></li>
-						<li><a href="<?php echo base_url();?>responden">Akun Responden</a></li>
-						<li><a href="#">Something else here</a></li>
-					</ul>
-				</li>
-		        <li><a href='<?php echo base_url();?>home/do_logout'>Log Out</a></li>
-		    </ul>
-		</div>
-	</div>
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a><span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-home" data-toggle="modal" data-target="#myModal"></span></a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+
+  <div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Kembali ke beranda?</h4>
+        </div>
+        <div class="modal-body">
+          <p>Instrumen penilaian belum selesai dibuat. Tetap batalkan dan kembali ke beranda?</p>
+        </div>
+        <div class="modal-footer">
+          <a href="<?php echo base_url();?>home"><button type="button" class="btn btn-default">Ya</button></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </nav>

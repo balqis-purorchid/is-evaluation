@@ -34,11 +34,17 @@
         //load row
         $this->load->model('organisasi_model');
         $data['resp'] = $this->organisasi_model->get_responden_by_id($id_responden);
-        $data['keterangan'] = "Username dan password wajib diganti";
+        // $data['keterangan'] = "Username dan password wajib diganti";
         // print_r($data['resp']);
 
         //load view untuk edit akun
         $this->load->view('aktifkan_akun_view', $data);
+    }
+
+    public function nonaktifkanresp($id_resp) {
+        $this->load->model('organisasi_model');
+        $this->organisasi_model->nonaktifkan_r($id_resp);
+        redirect('organisasi/responden');
     }
 
     public function aktifkan_akun() {
@@ -72,12 +78,14 @@
 
         $result = $this->organisasi_model->tambah_akun($data);
         if($result) {
-            $data['msg'] = "Akun berhasil dibuat";
+            echo '<script>alert("Akun telah berhasil dibuat");</script>';
+            redirect('login', 'refresh');
         }
         else{
-            $data['msg'] = "Akun gagal dibuat";
+            echo '<script>alert("Akun gagal dibuat");</script>';
+            redirect('organisasi', 'refresh');
         }
-            $this->load->view('after_signin_view', $data);
+            $this->load->view('after_signup_view', $data);
     }
 
     //edit akun organisasi
