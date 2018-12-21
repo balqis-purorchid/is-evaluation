@@ -62,7 +62,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <p>Perspektif pada Balanced Scorecard : Internal Business</p>
                             </td>
                             <td>
-                                <?php foreach ($sistemUO as $row) { ?>
+                                <?php foreach ($sistemIP as $row) { ?>
                                     <ul>
                                         <li>
                                             <?php echo $row->nama_sistem; ?>
@@ -78,7 +78,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <p>Perspektif pada Balanced Scorecard : Learning and Growth</p>
                             </td>
                             <td>
-                                <?php foreach ($sistemUO as $row) { ?>
+                                <?php foreach ($sistemFR as $row) { ?>
                                     <ul>
                                         <li>
                                             <?php echo $row->nama_sistem; ?>

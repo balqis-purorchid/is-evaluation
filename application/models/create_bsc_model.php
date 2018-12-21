@@ -32,12 +32,13 @@ class Create_BSC_Model extends CI_Model{
         }
     }
 
-    public function add_csf_used($id_bsc, $csf) {
-    	foreach ($csf as $row) {
-    		$data = array(
-    			'id_pakai_csf' => '',
-    			'id_bsc' => $id_bsc,
-    			'id_csf' => $row
+    public function add_csf_used($id_bsc, $combined) {
+        foreach ($combined as $csf => $bobot) {
+            $data = array(
+                'id_pakai_csf' => '',
+                'id_bsc' => $id_bsc,
+                'id_csf' => $csf,
+                'bobot' => $bobot
     		);
     		$this->db->insert('tb_csf_dipakai', $data);
     	}
@@ -95,6 +96,24 @@ class Create_BSC_Model extends CI_Model{
     	return $result;//hasilnya berupa array of object
     }
 
+    public function get_csf_by_id($arr){
+        $csf = [];
+        foreach ($arr as $row) {
+            $this->db->select('id_csf');
+            $this->db->select('teks_csf');
+            $this->db->select('perspektif');
+            $this->db->from('tb_csf');
+            $this->db->join('tb_sistem', 'tb_csf.id_sistem = tb_sistem.id_sistem');
+            $this->db->where('id_csf', $row);
+            $result = $this->db->get()->row();
+            if ($result) {
+                array_push($csf, $result);
+            }
+        }
+        
+        return $csf;//hasilnya berupa array of object
+    }
+
     public function get_csf_by_sistem($id_sistem){
     	$csf = [];
 
@@ -106,6 +125,15 @@ class Create_BSC_Model extends CI_Model{
     		}
     	}
     	return $csf;//hasilnya berupa array of object
+    }
+
+    public function get_csf_used($id_bsc) {
+        $this->db->select('*');
+        $this->db->from('tb_csf_dipakai');
+        $this->db->join('tb_csf', 'tb_csf_dipakai.id_csf = tb_csf.id_csf');
+        $this->db->where('id_bsc', $id_bsc);
+        $result = $this->db->get()->result();
+        return $result;
     }
 
     public function get_metrics_by_tag($tag) {
@@ -156,10 +184,18 @@ class Create_BSC_Model extends CI_Model{
         return $res;
     }
 
+    public function get_perspektif_by_csf($csf) {
+        $this->db->select('perspektif');
+        $this->db->from('csf');
+        $this->db->join('tb_sistem, tb_csf.id_sistem = tb_sistem.id_sistem');
+        $this->db->where('tb_csf.id_csf', $csf);
+        $res = $this->db->get()->row()->perspektif;
+        return $res;
+    }
+
     public function tambah_akun($id_bsc, $username, $password, $org, $sistem) {
     	$now = new DateTime();
         $tanggal_buat = date_format($now, 'Y-m-d');
-        $activate = date_format(date_modify($now, '+6 month'), 'Y-m-d');
         $data = array(
     		'id_responden' => '',
     		'username_responden' => $username,
@@ -168,7 +204,8 @@ class Create_BSC_Model extends CI_Model{
             'id_org' => $org,
             'id_sistem' => $sistem,
             'tanggal_buat' => $tanggal_buat,
-            'tanggal_aktifasi' => $activate,
+            'tanggal_aktifasi' => '',
+            'on_hold' => 'false'
     	);
     	$this->db->insert('tb_responden', $data);
     }
@@ -201,6 +238,9 @@ class Create_BSC_Model extends CI_Model{
         //get metrics yang digunakan di bsc
         $metrics = $this->get_metrics_used($id_bsc);
 
+        //get csf yang digunakan di bsc
+        $csf = $this->get_csf_used($id_bsc);
+
         //get instrumen yg dipakai
         $instrumen = $this->get_instrument_used($id_bsc);
         
@@ -212,7 +252,8 @@ class Create_BSC_Model extends CI_Model{
             'username' => $username_r,
             'password' => $password_r,
             'instrumen' => $instrumen,
-            'metrics' => $metrics
+            'metrics' => $metrics,
+            'csf' => $csf
         );
     }
 

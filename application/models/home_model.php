@@ -12,26 +12,13 @@ class Home_model extends CI_Model{
         $this->db->from('tb_responden');
         $this->db->where('id_org', $id_org);
         $query = $this->db->get()->result_array();
-
-        //cek tanggal buatnya, kalau udah lebih dari 3 hari, status ubah jadi on-hold
+        // print_r($query);
         foreach ($query as $row) {
-            //update responden yang durasi isi bsc udah habis (3 hari sejak dibuat)
-            $tgl_buat = new DateTime($row['tanggal_buat']);
-            $cek = date_modify($tgl_buat, '+3 day');
-            $now = new DateTime();
-            // print_r($cek);
-            if(date_format($cek, 'Y-m-d') <= date_format($now, 'Y-m-d')) {
-                $data = array(
-                    'on_hold' => 'true'
-                );
-                $this->db->where('id_responden', $row['id_responden']);
-                $this->db->update('tb_responden', $data);
-            }
-
             //update responden yang masa 6 bulannya udah habis jadi statusnya sudah bisa diaktifkan organisasi
-            $tgl_aktif = new DateTime($row['tanggal_aktifasi']);
-            $now = new DateTime();
-            if($now >= $tgl_aktif) {
+            $tgl_aktif = $row['tanggal_aktifasi'];
+            $now = date_format(new DateTime(), 'Y-m-d');
+            // print_r($now);
+            if($tgl_aktif!='0000-00-00' && $now >= $tgl_aktif) {
                 $data = array(
                     'on_hold' => 'aktifkan'
                 );
@@ -81,11 +68,12 @@ class Home_model extends CI_Model{
         return $this->db->get()->result();
     }
 
-    public function count_responden($id_bsc) {
+    public function count_responden($id_bsc, $putaran) {
         //select last row dari bsc yg diinginkan
         $this->db->select('pengisi_ke');
         $this->db->from('tb_jawaban');
         $this->db->where('id_bsc', $id_bsc);
+        $this->db->where('putaran', $putaran);
         $this->db->order_by('pengisi_ke', 'DESC');
         $this->db->limit(1);
         $result = $this->db->get()->result();
@@ -104,5 +92,20 @@ class Home_model extends CI_Model{
         $this->db->where('id_bsc', $id_bsc);
         $result = $this->db->get()->result();
         return $result[0]->nama_sistem;
+    }
+
+    // pengambilan data untuk melihat putaran sekarang
+    public function get_putaran($id_bsc) {
+        $this->db->select('putaran');
+        $this->db->from('tb_nilai');
+        $this->db->where('id_bsc', $id_bsc);
+        $this->db->order_by('putaran', 'desc');
+        $this->db->limit(1);
+        $res = $this->db->get()->row();
+        if($res) {
+            return $res->putaran;
+        } else {
+            return 0;
+        }
     }
 }

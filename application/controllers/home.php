@@ -20,11 +20,14 @@ class Home extends CI_Controller{
             $arr_counted = [];//array bsc yg masih aktif, jumlah respondennya sama nama sistemnya
             //get data berapa responden yg udah ngisi tiap bsc
             foreach ($arr_bsc as $row) {
-                $obj_bsc = new stdClass();
-                $obj_bsc->id_bsc = $row->id_bsc;
-                $obj_bsc->jumlah_resp = $this->home_model->count_responden($row->id_bsc);
-                $obj_bsc->nama_sistem = $this->home_model->get_nama_sistem($row->id_bsc);
-                array_push($arr_counted, $obj_bsc);
+                if(count($arr_counted) < 4) {
+                    $obj_bsc = new stdClass();
+                    $obj_bsc->id_bsc = $row->id_bsc;
+                    $obj_bsc->putaran = $this->home_model->get_putaran($row->id_bsc) + 1;//karena dr tabel nilai, berarti udh fix putaran paling akhir
+                    $obj_bsc->jumlah_resp = $this->home_model->count_responden($row->id_bsc, ($obj_bsc->putaran));
+                    $obj_bsc->nama_sistem = $this->home_model->get_nama_sistem($row->id_bsc);
+                    array_push($arr_counted, $obj_bsc);
+                }
             }
             //masukkin ke view
             $data['bsc_aktif'] = $arr_counted;
@@ -86,6 +89,7 @@ class Home extends CI_Controller{
         $data['nama_sistem'] = $data_get['nama_sistem'];
         $data['instrumen'] = $data_get['instrumen'];
         $data['metrics'] = $data_get['metrics'];
+        $data['csf'] = $data_get['csf'];
 
         $this->load->view('bsc_form_view', $data);
     }

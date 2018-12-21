@@ -11,9 +11,7 @@ class Organisasi_model extends CI_Model{
         $check = $this->not_exist('username_responden', 'tb_responden', $username);
         $check2 = $this->not_exist('password_responden', 'tb_responden', $password);
 
-        //kebijakan 1 : aktifasi kapanpun, jaraknya bakal tetep 3 hari untuk ngisi, dan pengisian berikutnya 6 bulan kemudian
         $now = new DateTime();
-        $tanggal_buat = date_format($now, 'Y-m-d');
         $activate = date_format(date_modify($now, '+6 month'), 'Y-m-d');
 
         if($check && $check2) {
@@ -21,8 +19,8 @@ class Organisasi_model extends CI_Model{
             $updateData = array(
                 'username_responden' => $username,
                 'password_responden' => $password,
-                'tanggal_buat' => $tanggal_buat,
-                'tanggal_aktifasi' => $activate,
+                'tanggal_buat' => $activate,
+                'tanggal_aktifasi' => '',
                 'on_hold' => 'false'
             );
             $this->db->where('id_responden', $id_resp);
@@ -32,6 +30,19 @@ class Organisasi_model extends CI_Model{
         else {
             return false;
         }
+    }
+
+    public function nonaktifkan_r($id_resp) {
+        //kalau di nonaktifkan, set tgl aktifkan 6 bulan sejak akun ditutup
+        $now = new DateTime();
+        $activate = date_format(date_modify($now, '+6 month'), 'Y-m-d');
+        $data = array(
+            'tanggal_aktifasi' => $activate,
+            'on_hold' => 'true'
+        );
+        $this->db->where('id_responden', $id_resp);
+        $this->db->update('tb_responden', $data);
+
     }
 
     public function tambah_akun($data) {

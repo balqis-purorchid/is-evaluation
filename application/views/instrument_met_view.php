@@ -14,16 +14,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <body>
     <!-- javascript buat ngecek jumlah bobot tiap perspektif udah 100 -->
     <script>
-        function getSum(total, num) {
-            return total + num;
-        }
         function myFunction() {
             // var group = {};
             var sum0 = 0, sum1 = 0, sum2 = 0, sum3 = 0;
             var elements = document.forms.metinsForm.getElementsByTagName("input");
             for(var i = 0; i < elements.length; i++)
             {
-                var groupName = elements[i].name.substring(0,6);
+                // console.log(elements[i]);
+                var groupName = elements[i].id;
                 if(groupName == 'bobot0') {
                     sum0 = sum0 + parseInt(elements[i].value);
                 } else if(groupName == 'bobot1') {
@@ -53,10 +51,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <form action='<?php echo base_url();?>create_bsc/finishing_bsc' id="metinsForm" method='post'>
                 <!-- <input type="hidden" name="id_bsc" value="<?php echo $id_bsc; ?>"> -->
                 <h3>Buat Scorecard Baru</h2>
-                <p>Isi sasaran strategi yang akan dijadikan bahan penilaian untuk masing-masing instrumen penilaian</p>
+                <p>Isi bobot dari setiap ukuran yang akan dijadikan bahan penilaian</p>
                 <!-- <br /> -->
                 <table class="table">
                     <thead>
+                        <th>No.</th>
                         <th>Ukuran (Measure)</th>
                         <th>Bobot</th>
                     </thead>
@@ -64,26 +63,49 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <?php 
                             $pers = $metrics[0]->perspektif;
                             $count = 0;
+                            $mark = 0;
+                            $counter = 1;
                         ?>
                         <tr><td colspan="2"><b>Tentukan bobot ukuran dari perspektif <?php echo $pers; ?></b></td></tr>
                         <?php
                             foreach ($metrics as $row) { 
-                            // cek kalo perspektifnya sama, name nya sama (ntar disatuin di controller)
+                            // cek kalo perspektifnya sama, name nya sama
                                 if($row->perspektif != $pers) {
                                     $pers = $row->perspektif;
-                                    $count++;
-                        ?>
-                                    <tr><td colspan="2"><b>Tentukan bobot ukuran dari perspektif <?php echo $pers; ?></b></td></tr>
-                                <?php } ?>
-                        <tr>
-                            <td>
-                                <?php echo $row->teks_metric; ?>
-                            </td>
-                            <td>
-                                <input type="number" name="bobot<?php echo $count;?>[<?php echo $row->id_metric; ?>]" id="bobot<?php echo $count;?>" max="100" min="0" required="required">
-                            </td>
-                        </tr>
-                        <?php } ?>
+                                    $count++; ?>
+                                    <tr>
+                                        <td colspan="2"><b>Tentukan bobot ukuran dari perspektif <?php echo $pers; ?></b></td>
+                                    </tr>
+                                <?php }
+                                if($pers == $perspektif_c && $mark==0) {
+                                    foreach ($csf as $key) { ?>
+                                        <tr>
+                                            <td>
+                                                <?php echo $counter; $counter++; ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $key->teks_csf; ?>
+                                            </td>
+                                            <td>
+                                                <input type="number" name="bobotcsf[<?php echo $key->id_csf; ?>]" id="bobot<?php echo $count;?>" max="100" min="0" required="required">
+                                            </td>
+                                        </tr>
+                                    <?php }
+                                    $mark=1;
+                                } ?>
+                                <tr>
+                                    <td>
+                                        <?php echo $counter; $counter++; ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $row->teks_metric; ?>
+                                    </td>
+                                    <td>
+                                        <input type="number" name="bobot<?php echo $count;?>[<?php echo $row->id_metric; ?>]" id="bobot<?php echo $count;?>" max="100" min="0" required="required">
+                                    </td>
+                                </tr>
+                                
+                            <?php } ?>
                     </tbody>
                 </table>
                 <br />
@@ -92,17 +114,34 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <br />
                 <table class="table">
                     <thead>
+                        <th>No.</th>
                         <th>Instrumen</th>
                         <th>Sasaran</th>
                     </thead>
                     <tbody>
-                        <?php foreach ($instrumen as $row) { ?>
+                        <?php $counter=1; foreach ($instrumen as $row) { ?>
                         <tr>
+                            <td>
+                                <?php echo $counter; $counter++; ?>
+                            </td>
                             <td>
                                 <?php echo $row->teks_instrumen; ?>
                             </td>
                             <td>
-                                <input type="number" name="sasaran_strategi[<?php echo $row->id_instrumen; ?>]" max="100" min="0" required="required">
+                                <input type="number" name="sasaran_strategi[<?php echo $row->id_instrumen; ?>]" max="100" min="10" required="required">
+                            </td>
+                        </tr>
+                        <?php } ?>
+                        <?php foreach ($instrumencsf as $row) { ?>
+                        <tr>
+                            <td>
+                                <?php echo $counter; $counter++; ?>
+                            </td>
+                            <td>
+                                <?php echo $row->teks_instrumen; ?>
+                            </td>
+                            <td>
+                                <input type="number" name="sasaran_strategi[<?php echo $row->id_instrumen; ?>]" max="100" min="10" required="required">
                             </td>
                         </tr>
                         <?php } ?>
