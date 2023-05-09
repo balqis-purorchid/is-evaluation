@@ -6,8 +6,6 @@ class Login extends CI_Controller{
     function __construct(){
         parent::__construct();
     }
-
-    // this is for testing pull/push branch
     
     public function index($msg = NULL){
         // Load our view to be displayed
