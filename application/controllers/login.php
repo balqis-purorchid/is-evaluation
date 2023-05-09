@@ -8,6 +8,7 @@ class Login extends CI_Controller{
     }
 
     // this is for testing pull/push branch
+    // this is for testing pull/push branch
     
     public function index($msg = NULL){
         // Load our view to be displayed
