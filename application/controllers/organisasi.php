@@ -4,7 +4,7 @@
     function __construct(){
         parent::__construct();
     }
-    
+    //tes
     public function index(){
         $this->check_isvalidated();
         // $this->load->view('buat_akun_view');
